@@ -1,15 +1,17 @@
-FROM node:9
+FROM node:8
 
 LABEL maintainer="Christophe Coquelet <christophe.coquelet@link-value.fr>"
 
-RUN mkdir /usr/src/app
+RUN mkdir -p /usr/src/app
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src
 
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
+ADD src/package.json /usr/src/package.json
 
-ADD src/package.json /usr/src/app/package.json
+RUN npm install -g webpack webpack-dev-server grunt-cli gulp-cli
 
 RUN npm install --silent
 
-EXPOSE 3000
+ENV PATH /usr/src/node_modules/.bin:$PATH
+
+WORKDIR /usr/src/app
