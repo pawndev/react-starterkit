@@ -1,0 +1,11 @@
+version: '2'
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    entrypoint: "npm run start"
+    ports:
+      - $FRONT_REACT_PORT:3000
+    volumes:
+      - ./front/src:/usr/src/app
