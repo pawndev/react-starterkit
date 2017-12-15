@@ -6,6 +6,6 @@ services:
       dockerfile: Dockerfile
     entrypoint: "npm run start"
     ports:
-      - $FRONT_REACT_PORT:3000
+      - $FRONT_REACT_PORT:$REACT_PORT
     volumes:
       - ./front/src:/usr/src/app
