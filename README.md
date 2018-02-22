@@ -12,4 +12,4 @@ To start the docker container, place your react app as `front/src`, you're packa
 - [ ] Add a reverse proxy
 - [ ] Make a todo example app
   - [ ] Symfony API
-  - [ ] Reactreact view
+  - [ ] React view
