@@ -1,6 +1,53 @@
-version: '2'
+version: '3.1'
 services:
-  front:
+  db:
+    container_name: booster.db
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    networks:
+      - booster
+  pma:
+    container_name: booster.pma
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    links:
+      - db
+    ports:
+      - $PMA_PORT:80
+    networks:
+      - booster
+  backend:
+    container_name: booster.backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - composer
+    entrypoint: "php bin/console server:run *:8000"
+    ports:
+      - $BACKEND_PORT:8000
+    volumes:
+      - ./backend/src:/var/www/symfony
+    networks:
+      - booster
+  composer:
+    restart: 'no'
+    image: composer/composer:php7
+    command: install
+    volumes:
+      - ./backend/src:/app
+  frontend:
+    container_name: booster.frontend
     build:
       context: ./front
       dockerfile: Dockerfile
@@ -9,3 +56,10 @@ services:
       - $FRONT_REACT_PORT:$REACT_PORT
     volumes:
       - ./front/src:/usr/src/app
+    networks:
+      - booster
+
+networks:
+  booster:
+    external:
+      name: booster
