@@ -7,6 +7,7 @@ To start the docker container, place your react app as `front/src`, you're packa
 - [x] Dockerize symfony
 - [x] Add MySQL
 - [x] Add PMA
+- [x] Add composer command in root directory
 - [ ] Add graylog services and link it with symfony 3
   - [ ] Create some graylog dashboard
 - [ ] Add a reverse proxy

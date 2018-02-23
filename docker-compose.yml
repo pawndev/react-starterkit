@@ -34,6 +34,9 @@ services:
     depends_on:
       - composer
     entrypoint: "php bin/console server:run *:8000"
+    links:
+      - db
+      - graylog
     ports:
       - $BACKEND_PORT:8000
     volumes:
@@ -41,8 +44,12 @@ services:
     networks:
       - booster
   composer:
+    container_name: booster.composer
     restart: 'no'
-    image: composer/composer:php7
+    build:
+      context: ./docker/composer
+      dockerfile: Dockerfile
+    image: lv-booster/composer:latest
     command: install
     volumes:
       - ./backend/src:/app
@@ -89,6 +96,7 @@ services:
     volumes:
       - ./volumes/graylog/journal:/usr/share/graylog/data/journal
       - ./graylog/config:/usr/share/graylog/data/config
+      - ./volumes/graylog/data:/opt/graylog/data
     environment:
       - GRAYLOG_PASSWORD_SECRET=$GRAYLOG_PASSWORD_SECRET
       # PASSWORD:
