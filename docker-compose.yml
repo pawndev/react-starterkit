@@ -1,4 +1,4 @@
-version: '3.1'
+version: '2'
 services:
   db:
     container_name: booster.db
@@ -56,6 +56,59 @@ services:
       - $FRONT_REACT_PORT:$REACT_PORT
     volumes:
       - ./front/src:/usr/src/app
+    networks:
+      - booster
+  mongo:
+    container_name: booster.mongo
+    image: mongo:3
+    volumes:
+      - ./volumes/mongo/data:/data/db
+    networks:
+      - booster
+  elasticsearch:
+    container_name: booster.elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
+    volumes:
+      - ./volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network_host
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    networks:
+      - booster
+  graylog:
+    container_name: booster.graylog
+    image: graylog/graylog:2.3.2-1
+    volumes:
+      - ./volumes/graylog/journal:/usr/share/graylog/data/journal
+      - ./graylog/config:/usr/share/graylog/data/config
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=$GRAYLOG_PASSWORD_SECRET
+      # PASSWORD:
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_WEB_ENDPOINT_URI=http://127.0.0.1:9000/api
+      - GRAYLOG_ELASTIC_SEARCH_HOSTS=http://elasticsearch:9300
+    links:
+      - mongo
+      - elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog TCP
+      - 514:514
+      # Syslog UDP
+      - 514:514/udp
+      # GELF TCP
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
     networks:
       - booster
 

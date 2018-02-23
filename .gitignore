@@ -232,4 +232,10 @@ tags
 
 
 # End of https://www.gitignore.io/api/vim,node,linux,macos,symfony,phpstorm
-
+volumes/elasticsearch/data/*
+volumes/graylog/journal/*
+volumes/mongo/data/*
+!volumes/elasticsearch/data/.gitkeep
+!volumes/graylog/journal/.gitkeep
+!volumes/mongo/data/.gitkeep
+graylog/config/node-id
